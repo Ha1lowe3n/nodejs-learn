@@ -1,39 +1,20 @@
-const http = require('http')
+import express from "express";
+import path from "path";
+import { fileURLToPath } from "url";
 
-const server = http.createServer((req, res) => {
-	if (req.method === "GET") {
-		res.writeHead(200, {
-			'Content-Type': "text/html"
-		})
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+const app = express();
+const PORT = process.env.PORT || 3000;
 
-		res.end(`
-			<h1>Form</h1>
-			<form method="post" action="/">
-				<input name="title" type="text" />
-				<button type="submit">Send</button>
-			</form>
-		`)
-	} else if (req.method === "POST") {
-		res.writeHead(200, {
-			"Content-Type": "text/html; charset=utf-8"
-		})
-		const body = []
+app.get("/", (req, res) => {
+    res.sendFile(path.join(__dirname, "views", "index.html"));
+});
 
-		req.on("data", data => {
-			body.push(Buffer.from(data))
-		})
+app.get("/about", (req, res) => {
+    res.sendFile(path.join(__dirname, "views", "about.html"));
+});
 
-		req.on("end", () => {
-			const message = body.toString().split("=")[1]
-
-			res.end(`
-				<h1>Ваше сообщение: ${message}</h1>
-			`)
-		})
-
-	}
-})
-
-server.listen(3000, () => {
-	console.log('Server is running...')
-})
+app.listen(PORT, () => {
+    console.log(`Server is running on port ${PORT}`);
+});
